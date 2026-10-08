@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Interaktif Statistika Kelas 8 - 20 Soal Essay</title>
+    
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- KaTeX for Math Formatting -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMath()"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0fdf4',
+                            100: '#dcfce7',
+                            500: '#22c55e',
+                            600: '#16a34a',
+                            700: '#15803d',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .katex { font-size: 1.05em; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header Navbar -->
+    <header class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-md shadow-indigo-200">
+                    <i class="fa-solid fa-graduation-cap text-lg"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-slate-900 text-base sm:text-lg leading-tight">Quiz Interaktif Statistika</h1>
+                    <p class="text-xs text-indigo-600 font-medium">20 Soal Essay & Evaluasi Lengkap</p>
+                </div>
+            </div>
+
+            <!-- Score Badge & Progress -->
+            <div class="flex items-center space-x-3">
+                <div class="hidden sm:flex flex-col text-right">
+                    <span class="text-xs text-slate-500 font-medium">Progress Terjawab</span>
+                    <span id="progressText" class="text-xs font-bold text-indigo-600">0 / 20 Soal</span>
+                </div>
+                <div class="flex items-center bg-amber-50 border border-amber-200 px-3 py-1.5 rounded-full text-amber-800 font-bold text-xs sm:text-sm shadow-sm">
+                    <i class="fa-solid fa-star text-amber-500 mr-1.5 animate-bounce"></i>
+                    <span>Skor Total: <span id="totalScore">0</span> / 100</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+
+        <!-- Hero & Info Banner -->
+        <section class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-violet-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
+            <div class="absolute -top-12 -right-12 w-48 h-48 bg-white/10 rounded-full blur-2xl"></div>
+            <div class="relative z-10 space-y-3">
+                <div class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-white/20 text-indigo-100 backdrop-blur-md">
+                    <i class="fa-solid fa-chart-line mr-1.5"></i> Latihan Mandiri Terbimbing
+                </div>
+                <h2 class="text-2xl sm:text-3xl font-extrabold tracking-tight">Uji Pemahaman Statistika (20 Soal Essay)</h2>
+                <p class="text-indigo-200 text-xs sm:text-sm max-w-3xl leading-relaxed">
+                    Kerjakan 20 soal essay berikut yang mencakup <strong>Data Baris, Tabel Frekuensi, Diagram Batang, Diagram Garis, dan Diagram Lingkaran</strong> (termasuk mencari sudut & persentase yang belum diketahui). Setiap soal bernilai 5 poin!
+                </p>
+                <div class="flex flex-wrap gap-2 pt-2 text-xs font-semibold">
+                    <button onclick="filterQuestions('all')" class="q-filter-btn px-3 py-1.5 rounded-lg bg-white text-indigo-900 font-bold">Semua Soal (20)</button>
+                    <button onclick="filterQuestions('baris')" class="q-filter-btn px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white">Data Baris (1-4)</button>
+                    <button onclick="filterQuestions('tabel')" class="q-filter-btn px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white">Tabel (5-8)</button>
+                    <button onclick="filterQuestions('batang')" class="q-filter-btn px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white">Diagram Batang (9-11)</button>
+                    <button onclick="filterQuestions('garis')" class="q-filter-btn px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white">Diagram Garis (12-14)</button>
+                    <button onclick="filterQuestions('lingkaran')" class="q-filter-btn px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 text-white">Diagram Lingkaran (15-20)</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Jump Grid -->
+        <section class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center">
+                    <i class="fa-solid fa-list-check mr-2 text-indigo-600"></i> Navigasi Nomor Soal
+                </span>
+                <span class="text-xs text-slate-500">Klik nomor untuk menuju ke soal</span>
+            </div>
+            <div id="navGrid" class="grid grid-cols-5 sm:grid-cols-10 md:grid-cols-20 gap-2">
+                <!-- Javascript will generate 1 to 20 buttons here -->
+            </div>
+        </section>
+
+        <!-- Questions Container -->
+        <div id="questionsContainer" class="space-y-8">
+            <!-- Questions cards will be inserted here dynamically -->
+        </div>
+
+        <!-- Global Submit & Final Results Modal Trigger -->
+        <section class="bg-white rounded-2xl p-6 border border-slate-200 text-center space-y-4 shadow-sm">
+            <h3 class="text-lg font-bold text-slate-900">Selesai Mengerjakan Semua Soal?</h3>
+            <p class="text-xs sm:text-sm text-slate-600">Periksa kembali jawaban kamu. Jika sudah yakin, dapatkan rangkuman hasil akhir latihan kamu!</p>
+            <button onclick="checkAllQuestions()" class="px-6 py-3 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold text-sm rounded-xl shadow-lg shadow-emerald-200 transition transform hover:-translate-y-0.5">
+                <i class="fa-solid fa-check-double mr-2"></i> Kumpulkan & Cek Semua Jawaban
+            </button>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+        <p class="font-medium text-slate-700">Quiz Statistika Interaktif SMP Kelas 8 — Evaluasi Matematika Mandiri</p>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC & QUESTION DATA -->
+    <script>
+        // Array containing the 20 Quiz Essay Questions
+        const quizData = [
+            // CATEGORY 1: DATA BARIS (1 - 4)
+            {
+                id: 1,
+                category: "baris",
+                title: "Soal 1: Data Baris (Nilai Ulangan Harian)",
+                description: "Berikut ini adalah data nilai ulangan Harian IPA dari 7 siswa:<br><span class='font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded text-sm'>70, 85, 60, 90, 85, 75, 95</span>",
+                fields: [
+                    { id: "q1_mean", label: "Mean (Rata-rata)", key: "mean", target: 80, hint: "Jumlahkan semua data lalu bagi 7." },
+                    { id: "q1_median", label: "Median (Nilai Tengah)", key: "median", target: 85, hint: "Urutkan data dari terkecil: 60, 70, 75, 85, 85, 90, 95." },
+                    { id: "q1_modus", label: "Modus (Data Terbanyak)", key: "modus", target: 85, hint: "Nilai yang paling sering muncul." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Data terurut: $60, 70, 75, 85, 85, 90, 95$ ($n = 7$).<br>2. $\\text{Mean} = \\frac{60+70+75+85+85+90+95}{7} = \\frac{560}{7} = 80$.<br>3. $\\text{Median}$ adalah data ke-4 yaitu $85$.<br>4. $\\text{Modus} = 85$ (muncul 2 kali)."
+            },
+            {
+                id: 2,
+                category: "baris",
+                title: "Soal 2: Data Baris (Berat Badan Siswa)",
+                description: "Data berat badan (kg) 8 orang anggota klub olahraga adalah sebagai berikut:<br><span class='font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded text-sm'>40, 42, 42, 45, 45, 45, 48, 53</span>",
+                fields: [
+                    { id: "q2_mean", label: "Mean (Rata-rata)", key: "mean", target: 45, hint: "Total berat badan divided by 8." },
+                    { id: "q2_median", label: "Median (Nilai Tengah)", key: "median", target: 45, hint: "Karena genap (n=8), cari rata-rata data ke-4 dan ke-5." },
+                    { id: "q2_modus", label: "Modus (Berat Sering Muncul)", key: "modus", target: 45, hint: "Lihat berat yang muncul 3 kali." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Data sudah terurut ($n = 8$).<br>2. $\\text{Mean} = \\frac{360}{8} = 45\\text{ kg}$.<br>3. $\\text{Median} = \\frac{\\text{Data ke-4} + \\text{Data ke-5}}{2} = \\frac{45 + 45}{2} = 45\\text{ kg}$.<br>4. $\\text{Modus} = 45\\text{ kg}$ (muncul 3 kali)."
+            },
+            {
+                id: 3,
+                category: "baris",
+                title: "Soal 3: Data Baris (Waktu Tempuh Sepeda)",
+                description: "Waktu tempuh (menit) 9 siswa menuju sekolah:<br><span class='font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded text-sm'>12, 15, 10, 18, 15, 14, 20, 15, 16</span>",
+                fields: [
+                    { id: "q3_mean", label: "Mean (Rata-rata)", key: "mean", target: 15, hint: "Total waktu / 9." },
+                    { id: "q3_median", label: "Median (Nilai Tengah)", key: "median", target: 15, hint: "Urutkan: 10, 12, 14, 15, 15, 15, 16, 18, 20." },
+                    { id: "q3_modus", label: "Modus", key: "modus", target: 15, hint: "Angka yang mendominasi deret data." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Data terurut: $10, 12, 14, 15, 15, 15, 16, 18, 20$ ($n = 9$).<br>2. $\\text{Mean} = \\frac{135}{9} = 15\\text{ menit}$.<br>3. $\\text{Median} = \\text{Data ke-5} = 15\\text{ menit}$.<br>4. $\\text{Modus} = 15\\text{ menit}$."
+            },
+            {
+                id: 4,
+                category: "baris",
+                title: "Soal 4: Data Baris (Tinggi Badan Siswa)",
+                description: "Tinggi badan (cm) 10 orang siswa pengibar bendera:<br><span class='font-mono font-bold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded text-sm'>150, 152, 148, 155, 152, 150, 158, 152, 160, 153</span>",
+                fields: [
+                    { id: "q4_mean", label: "Mean (Rata-rata)", key: "mean", target: 153, hint: "Jumlahkan 10 data tinggi / 10." },
+                    { id: "q4_median", label: "Median (Nilai Tengah)", key: "median", target: 152, hint: "Urutan data ke-5 dan ke-6 adalah 152 dan 152." },
+                    { id: "q4_modus", label: "Modus", key: "modus", target: 152, hint: "Tinggi yang paling banyak dimiliki siswa." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Urutan data: $148, 150, 150, 152, 152, 152, 153, 155, 158, 160$ ($n=10$).<br>2. $\\text{Mean} = \\frac{1530}{10} = 153\\text{ cm}$.<br>3. $\\text{Median} = \\frac{152+152}{2} = 152\\text{ cm}$.<br>4. $\\text{Modus} = 152\\text{ cm}$ (muncul 3 kali)."
+            },
+
+            // CATEGORY 2: TABEL FREKUENSI (5 - 8)
+            {
+                id: 5,
+                category: "tabel",
+                title: "Soal 5: Tabel Frekuensi (Nilai Matematika)",
+                description: "Tabel distribusi nilai Matematika siswa kelas 8B:<br><table class='w-full text-center text-xs border my-2 bg-white rounded-lg overflow-hidden'><tr class='bg-slate-100 font-bold'><td class='border p-1'>Nilai ($x$)</td><td class='border p-1'>60</td><td class='border p-1'>70</td><td class='border p-1'>80</td><td class='border p-1'>90</td></tr><tr><td class='border p-1 font-bold'>Frekuensi ($f$)</td><td class='border p-1'>3</td><td class='border p-1'>5</td><td class='border p-1'>8</td><td class='border p-1'>4</td></tr></table>",
+                fields: [
+                    { id: "q5_mean", label: "Mean (Rata-rata)", key: "mean", target: 76.5, hint: "Hitung total f.x = 180+350+640+360 = 1530. Total f = 20." },
+                    { id: "q5_median", label: "Median", key: "median", target: 80, hint: "Data ke-10 dan ke-11 berada di nilai 80." },
+                    { id: "q5_modus", label: "Modus", key: "modus", target: 80, hint: "Lihat frekuensi tertinggi (f = 8)." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. $\\sum f = 20$, $\\sum (f \\cdot x) = (3\\times 60)+(5\\times 70)+(8\\times 80)+(4\\times 90) = 1530$.<br>2. $\\text{Mean} = \\frac{1530}{20} = 76{,}5$.<br>3. $\\text{Median}$: posisi data 10 & 11 berada di kelompok nilai 80 (karena $f_k$ mencapai 16 pada nilai 80).<br>4. $\\text{Modus} = 80$."
+            },
+            {
+                id: 6,
+                category: "tabel",
+                title: "Soal 6: Tabel Frekuensi (Ukuran Sepatu)",
+                description: "Data ukuran sepatu siswa yang terjual di koperasi sekolah:<br><table class='w-full text-center text-xs border my-2 bg-white rounded-lg overflow-hidden'><tr class='bg-slate-100 font-bold'><td class='border p-1'>Ukuran ($x$)</td><td class='border p-1'>38</td><td class='border p-1'>39</td><td class='border p-1'>40</td><td class='border p-1'>41</td><td class='border p-1'>42</td></tr><tr><td class='border p-1 font-bold'>Terjual ($f$)</td><td class='border p-1'>4</td><td class='border p-1'>6</td><td class='border p-1'>7</td><td class='border p-1'>2</td><td class='border p-1'>1</td></tr></table>",
+                fields: [
+                    { id: "q6_mean", label: "Mean (Rata-rata)", key: "mean", target: 39.5, hint: "Total f*x = 152 + 234 + 280 + 82 + 42 = 790. Total f = 20." },
+                    { id: "q6_median", label: "Median", key: "median", target: 39.5, hint: "Data ke-10 (39) dan ke-11 (40). Hitung rata-ratanya." },
+                    { id: "q6_modus", label: "Modus", key: "modus", target: 40, hint: "Ukuran dengan penjualan terbanyak (f = 7)." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. $\\sum f = 20$, $\\sum (f \\cdot x) = 790$.<br>2. $\\text{Mean} = \\frac{790}{20} = 39{,}5$.<br>3. $\\text{Median} = \\frac{39 + 40}{2} = 39{,}5$.<br>4. $\\text{Modus} = 40$ (frekuensi 7)."
+            },
+            {
+                id: 7,
+                category: "tabel",
+                title: "Soal 7: Tabel Frekuensi (Jumlah Saudara Kandung)",
+                description: "Survei jumlah saudara kandung dari 25 siswa:<br><table class='w-full text-center text-xs border my-2 bg-white rounded-lg overflow-hidden'><tr class='bg-slate-100 font-bold'><td class='border p-1'>Saudara ($x$)</td><td class='border p-1'>1</td><td class='border p-1'>2</td><td class='border p-1'>3</td><td class='border p-1'>4</td></tr><tr><td class='border p-1 font-bold'>Banyak Siswa ($f$)</td><td class='border p-1'>6</td><td class='border p-1'>10</td><td class='border p-1'>6</td><td class='border p-1'>3</td></tr></table>",
+                fields: [
+                    { id: "q7_mean", label: "Mean (Rata-rata)", key: "mean", target: 2.24, hint: "Total f.x = 6+20+18+12 = 56. Bagi 25." },
+                    { id: "q7_median", label: "Median", key: "median", target: 2, hint: "Data ganjil (n=25). Data ke-13 berada pada kelompok 2." },
+                    { id: "q7_modus", label: "Modus", key: "modus", target: 2, hint: "Jumlah saudara terbanyak dimiliki siswa." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. $\\sum f = 25$, $\\sum (f \\cdot x) = 56$.<br>2. $\\text{Mean} = \\frac{56}{25} = 2{,}24$.<br>3. $\\text{Median}$: Posisi ke-13 ada pada nilai 2.<br>4. $\\text{Modus} = 2$ saudara."
+            },
+            {
+                id: 8,
+                category: "tabel",
+                title: "Soal 8: Tabel Frekuensi (Skor Kuis Kuis Online)",
+                description: "Skor kuis singkat matematika dari 30 peserta:<br><table class='w-full text-center text-xs border my-2 bg-white rounded-lg overflow-hidden'><tr class='bg-slate-100 font-bold'><td class='border p-1'>Skor ($x$)</td><td class='border p-1'>50</td><td class='border p-1'>60</td><td class='border p-1'>70</td><td class='border p-1'>80</td><td class='border p-1'>90</td></tr><tr><td class='border p-1 font-bold'>Peserta ($f$)</td><td class='border p-1'>2</td><td class='border p-1'>4</td><td class='border p-1'>10</td><td class='border p-1'>8</td><td class='border p-1'>6</td></tr></table>",
+                fields: [
+                    { id: "q8_mean", label: "Mean (Rata-rata)", key: "mean", target: 74, hint: "Total f.x = 100+240+700+640+540 = 2220. Bagi 30." },
+                    { id: "q8_median", label: "Median", key: "median", target: 70, hint: "Data ke-15 dan 16 berada pada skor 70." },
+                    { id: "q8_modus", label: "Modus", key: "modus", target: 70, hint: "Skor dengan frekuensi paling banyak (f = 10)." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. $\\sum f = 30$, $\\sum (f \\cdot x) = 2220$.<br>2. $\\text{Mean} = \\frac{2220}{30} = 74$.<br>3. $\\text{Median} = 70$.<br>4. $\\text{Modus} = 70$."
+            },
+
+            // CATEGORY 3: DIAGRAM BATANG (9 - 11)
+            {
+                id: 9,
+                category: "batang",
+                title: "Soal 9: Diagram Batang (Hasil Panen Padi)",
+                description: "Diagram batang berikut menunjukkan hasil panen padi (ton) selama 5 hari:<br><div class='bg-slate-50 p-2 rounded-xl my-2 border'><canvas id='chartQ9' class='w-full h-36'></canvas></div>",
+                chartType: "bar",
+                chartData: { labels: ["Senin", "Selasa", "Rabu", "Kamis", "Jumat"], values: [20, 35, 35, 40, 50] },
+                fields: [
+                    { id: "q9_mean", label: "Mean Panen (ton)", key: "mean", target: 36, hint: "Total panen (20+35+35+40+50) / 5." },
+                    { id: "q9_median", label: "Median Panen", key: "median", target: 35, hint: "Data terurut: 20, 35, 35, 40, 50. Data ke-3 adalah..." },
+                    { id: "q9_modus", label: "Modus Panen", key: "modus", target: 35, hint: "Hasil panen yang terjadi sebanyak 2 kali." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Data panen: $20, 35, 35, 40, 50$ ($n = 5$).<br>2. $\\text{Mean} = \\frac{180}{5} = 36\\text{ ton}$.<br>3. $\\text{Median} = 35\\text{ ton}$.<br>4. $\\text{Modus} = 35\\text{ ton}$."
+            },
+            {
+                id: 10,
+                category: "batang",
+                title: "Soal 10: Diagram Batang (Pengunjung Perpustakaan)",
+                description: "Jumlah pengunjung perpustakaan sekolah selama seminggu (6 hari kerja):<br><div class='bg-slate-50 p-2 rounded-xl my-2 border'><canvas id='chartQ10' class='w-full h-36'></canvas></div>",
+                chartType: "bar",
+                chartData: { labels: ["Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"], values: [12, 18, 24, 24, 30, 42] },
+                fields: [
+                    { id: "q10_mean", label: "Mean Pengunjung", key: "mean", target: 25, hint: "Total pengunjung (150) / 6 hari." },
+                    { id: "q10_median", label: "Median Pengunjung", key: "median", target: 24, hint: "Data ke-3 (24) dan ke-4 (24)." },
+                    { id: "q10_modus", label: "Modus", key: "modus", target: 24, hint: "Jumlah pengunjung yang muncul 2 hari berturut." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Data terurut: $12, 18, 24, 24, 30, 42$ ($n = 6$).<br>2. $\\text{Mean} = \\frac{150}{6} = 25\\text{ orang}$.<br>3. $\\text{Median} = \\frac{24+24}{2} = 24\\text{ orang}$.<br>4. $\\text{Modus} = 24\\text{ orang}$."
+            },
+            {
+                id: 11,
+                category: "batang",
+                title: "Soal 11: Diagram Batang (Penjualan Laptop)",
+                description: "Data penjualan laptop (unit) di Toko Komputer Jan - Mei:<br><div class='bg-slate-50 p-2 rounded-xl my-2 border'><canvas id='chartQ11' class='w-full h-36'></canvas></div>",
+                chartType: "bar",
+                chartData: { labels: ["Jan", "Feb", "Mar", "Apr", "Mei"], values: [15, 25, 30, 30, 45] },
+                fields: [
+                    { id: "q11_mean", label: "Mean Penjualan", key: "mean", target: 29, hint: "Total unit (145) / 5 bulan." },
+                    { id: "q11_median", label: "Median Penjualan", key: "median", target: 30, hint: "Data ke-3 dari urutan." },
+                    { id: "q11_modus", label: "Modus Penjualan", key: "modus", target: 30, hint: "Angka penjualan terulang." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Data: $15, 25, 30, 30, 45$ ($n=5$).<br>2. $\\text{Mean} = \\frac{145}{5} = 29\\text{ unit}$.<br>3. $\\text{Median} = 30\\text{ unit}$.<br>4. $\\text{Modus} = 30\\text{ unit}$."
+            },
+
+            // CATEGORY 4: DIAGRAM GARIS (12 - 14)
+            {
+                id: 12,
+                category: "garis",
+                title: "Soal 12: Diagram Garis (Suhu Tubuh Pasien)",
+                description: "Catatan suhu tubuh (°C) seorang pasien rawat inap jam 07.00 - 11.00:<br><div class='bg-slate-50 p-2 rounded-xl my-2 border'><canvas id='chartQ12' class='w-full h-36'></canvas></div>",
+                chartType: "line",
+                chartData: { labels: ["07.00", "08.00", "09.00", "10.00", "11.00"], values: [36, 37, 38, 38, 41] },
+                fields: [
+                    { id: "q12_mean", label: "Mean Suhu (°C)", key: "mean", target: 38, hint: "Total suhu (190) / 5." },
+                    { id: "q12_median", label: "Median Suhu", key: "median", target: 38, hint: "Data terurut ke-3." },
+                    { id: "q12_modus", label: "Modus Suhu", key: "modus", target: 38, hint: "Suhu yang terjadi dua kali." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Data: $36, 37, 38, 38, 41$ ($n=5$).<br>2. $\\text{Mean} = \\frac{190}{5} = 38^\\circ\\text{C}$.<br>3. $\\text{Median} = 38^\\circ\\text{C}$.<br>4. $\\text{Modus} = 38^\\circ\\text{C}$."
+            },
+            {
+                id: 13,
+                category: "garis",
+                title: "Soal 13: Diagram Garis (Produksi Pabrik)",
+                description: "Hasil produksi barang (ton) pabrik selama 6 bulan:<br><div class='bg-slate-50 p-2 rounded-xl my-2 border'><canvas id='chartQ13' class='w-full h-36'></canvas></div>",
+                chartType: "line",
+                chartData: { labels: ["Jan", "Feb", "Mar", "Apr", "Mei", "Jun"], values: [40, 50, 60, 60, 70, 80] },
+                fields: [
+                    { id: "q13_mean", label: "Mean Produksi", key: "mean", target: 60, hint: "Total produksi (360) / 6 bulan." },
+                    { id: "q13_median", label: "Median Produksi", key: "median", target: 60, hint: "Rata-rata data ke-3 (60) dan ke-4 (60)." },
+                    { id: "q13_modus", label: "Modus Produksi", key: "modus", target: 60, hint: "Tingkat produksi berulang." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Data terurut: $40, 50, 60, 60, 70, 80$ ($n=6$).<br>2. $\\text{Mean} = \\frac{360}{6} = 60\\text{ ton}$.<br>3. $\\text{Median} = \\frac{60+60}{2} = 60\\text{ ton}$.<br>4. $\\text{Modus} = 60\\text{ ton}$."
+            },
+            {
+                id: 14,
+                category: "garis",
+                title: "Soal 14: Diagram Garis (Skor Game e-Sports)",
+                description: "Skor yang diraih tim e-sports dalam 5 babak pertandingan:<br><div class='bg-slate-50 p-2 rounded-xl my-2 border'><canvas id='chartQ14' class='w-full h-36'></canvas></div>",
+                chartType: "line",
+                chartData: { labels: ["Babak 1", "Babak 2", "Babak 3", "Babak 4", "Babak 5"], values: [80, 85, 90, 90, 105] },
+                fields: [
+                    { id: "q14_mean", label: "Mean Skor", key: "mean", target: 90, hint: "Total skor (450) / 5 babak." },
+                    { id: "q14_median", label: "Median Skor", key: "median", target: 90, hint: "Nilai tengah data terurut." },
+                    { id: "q14_modus", label: "Modus Skor", key: "modus", target: 90, hint: "Skor yang muncul dua kali." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Data terurut: $80, 85, 90, 90, 105$ ($n=5$).<br>2. $\\text{Mean} = \\frac{450}{5} = 90$.<br>3. $\\text{Median} = 90$.<br>4. $\\text{Modus} = 90$."
+            },
+
+            // CATEGORY 5: DIAGRAM LINGKARAN (15 - 20)
+            {
+                id: 15,
+                category: "lingkaran",
+                title: "Soal 15: Diagram Lingkaran Dalam Derajat (Hobi Siswa)",
+                description: "Diagram lingkaran hobi 72 orang siswa (dalam derajat):<br>• Seni = $100^\\circ$ &nbsp;|&nbsp; • Olahraga = $120^\\circ$<br>• Membaca = $80^\\circ$ &nbsp;|&nbsp; • Musik = $60^\\circ$<br><div class='bg-slate-50 p-2 rounded-xl my-2 border flex justify-center'><div class='w-48 h-48'><canvas id='chartQ15'></canvas></div></div>",
+                chartType: "pie",
+                chartData: { labels: ["Seni (100°)", "Olahraga (120°)", "Membaca (80°)", "Musik (60°)"], values: [100, 120, 80, 60] },
+                fields: [
+                    { id: "q15_olahraga", label: "Banyak Siswa Olahraga", key: "olahraga", target: 24, hint: "(120 / 360) * 72 siswa." },
+                    { id: "q15_mean", label: "Mean Frekuensi per Hobi", key: "mean", target: 18, hint: "Total siswa (72) / 4 hobi." },
+                    { id: "q15_modus", label: "Jumlah Siswa Modus Hobi", key: "modus", target: 24, hint: "Jumlah siswa di hobi sudut terbesar (Olahraga)." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Siswa Olahraga = $\\frac{120^\\circ}{360^\\circ} \\times 72 = 24$ siswa.<br>2. Frekuensi tiap hobi: Seni = 20, Olahraga = 24, Membaca = 16, Musik = 12.<br>3. $\\text{Mean} = \\frac{72}{4} = 18$ siswa.<br>4. Modus hobi = Olahraga ($24$ siswa)."
+            },
+            {
+                id: 16,
+                category: "lingkaran",
+                title: "Soal 16: Diagram Lingkaran Dalam Persentase (Ekskul)",
+                description: "Diagram pilihan ekstrakurikuler dari 60 siswa (dalam %):<br>• Basket = $30\\%$ &nbsp;|&nbsp; • Futsal = $40\\%$<br>• Tari = $20\\%$ &nbsp;|&nbsp; • Musik = $10\\%$<br><div class='bg-slate-50 p-2 rounded-xl my-2 border flex justify-center'><div class='w-48 h-48'><canvas id='chartQ16'></canvas></div></div>",
+                chartType: "pie",
+                chartData: { labels: ["Basket (30%)", "Futsal (40%)", "Tari (20%)", "Musik (10%)"], values: [30, 40, 20, 10] },
+                fields: [
+                    { id: "q16_futsal", label: "Banyak Siswa Futsal", key: "futsal", target: 24, hint: "40% * 60 siswa." },
+                    { id: "q16_mean", label: "Mean Frekuensi per Ekskul", key: "mean", target: 15, hint: "Total siswa (60) / 4." },
+                    { id: "q16_modus", label: "Jumlah Siswa Modus", key: "modus", target: 24, hint: "Siswa terbanyak pada pilihan Futsal." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Futsal = $40\\% \\times 60 = 24$ siswa.<br>2. Siswa per ekskul: Basket = 18, Futsal = 24, Tari = 12, Musik = 6.<br>3. $\\text{Mean} = \\frac{60}{4} = 15$ siswa.<br>4. Modus = Futsal ($24$ siswa)."
+            },
+            {
+                id: 17,
+                category: "lingkaran",
+                title: "Soal 17: Menentukan Sudut & Jumlah Siswa yang Belum Ada",
+                description: "Diagram lingkaran buah favorit dari 360 siswa:<br>• Jeruk = $110^\\circ$ &nbsp;|&nbsp; • Apel = $90^\\circ$<br>• Mangga = $70^\\circ$ &nbsp;|&nbsp; • Pisang = <strong>?°</strong><br><div class='bg-slate-50 p-2 rounded-xl my-2 border flex justify-center'><div class='w-48 h-48'><canvas id='chartQ17'></canvas></div></div>",
+                chartType: "pie",
+                chartData: { labels: ["Jeruk (110°)", "Apel (90°)", "Mangga (70°)", "Pisang (?°)"], values: [110, 90, 70, 90] },
+                fields: [
+                    { id: "q17_sudut", label: "Besar Sudut Pisang (°)", key: "sudut", target: 90, hint: "360° - (110° + 90° + 70°)." },
+                    { id: "q17_pisang", label: "Banyak Siswa Pisang", key: "pisang", target: 90, hint: "(90° / 360°) * 360 siswa." },
+                    { id: "q17_jeruk", label: "Jumlah Siswa Modus (Jeruk)", key: "jeruk", target: 110, hint: "(110° / 360°) * 360." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Sudut Pisang = $360^\\circ - (110^\\circ + 90^\\circ + 70^\\circ) = 360^\\circ - 270^\\circ = 90^\\circ$.<br>2. Banyak siswa Pisang = $\\frac{90^\\circ}{360^\\circ} \\times 360 = 90$ siswa.<br>3. Modus = Jeruk ($110^\\circ$) = $\\frac{110^\\circ}{360^\\circ} \\times 360 = 110$ siswa."
+            },
+            {
+                id: 18,
+                category: "lingkaran",
+                title: "Soal 18: Menentukan Persentase & Frekuensi yang Belum Ada",
+                description: "Diagram lingkaran pilihan cabang olahraga dari 80 siswa:<br>• Renang = $25\\%$ &nbsp;|&nbsp; • Voli = $35\\%$<br>• Bulutangkis = $25\\%$ &nbsp;|&nbsp; • Catur = <strong>?%</strong><br><div class='bg-slate-50 p-2 rounded-xl my-2 border flex justify-center'><div class='w-48 h-48'><canvas id='chartQ18'></canvas></div></div>",
+                chartType: "pie",
+                chartData: { labels: ["Renang (25%)", "Voli (35%)", "Bulutangkis (25%)", "Catur (?%)"], values: [25, 35, 25, 15] },
+                fields: [
+                    { id: "q18_persen", label: "Persentase Catur (%)", key: "persen", target: 15, hint: "100% - (25% + 35% + 25%)." },
+                    { id: "q18_catur", label: "Banyak Siswa Catur", key: "catur", target: 12, hint: "15% dari 80 siswa." },
+                    { id: "q18_modus", label: "Jumlah Siswa Modus (Voli)", key: "modus", target: 28, hint: "35% dari 80 siswa." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Persentase Catur = $100\\% - (25\\% + 35\\% + 25\\%) = 15\\%$.<br>2. Siswa Catur = $15\\% \\times 80 = 12$ siswa.<br>3. Modus (Voli $35\\%$) = $35\\% \\times 80 = 28$ siswa."
+            },
+            {
+                id: 19,
+                category: "lingkaran",
+                title: "Soal 19: Menentukan Nilai di Sudut Tertentu & Persentase Sektor",
+                description: "Mata pelajaran favorit dari 120 siswa:<br>• IPA = $120^\\circ$ &nbsp;|&nbsp; • Matematika = $90^\\circ$<br>• Bahasa = $90^\\circ$ &nbsp;|&nbsp; • IPS = $60^\\circ$<br><div class='bg-slate-50 p-2 rounded-xl my-2 border flex justify-center'><div class='w-48 h-48'><canvas id='chartQ19'></canvas></div></div>",
+                chartType: "pie",
+                chartData: { labels: ["IPA (120°)", "Matematika (90°)", "Bahasa (90°)", "IPS (60°)"], values: [120, 90, 90, 60] },
+                fields: [
+                    { id: "q19_ipa", label: "Banyak Siswa IPA", key: "ipa", target: 40, hint: "(120° / 360°) * 120 siswa." },
+                    { id: "q19_mean", label: "Mean Frekuensi per Mapel", key: "mean", target: 30, hint: "Total siswa (120) / 4." },
+                    { id: "q19_ips", label: "Banyak Siswa IPS", key: "ips", target: 20, hint: "(60° / 360°) * 120 siswa." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Banyak siswa IPA = $\\frac{120^\\circ}{360^\\circ} \\times 120 = 40$ siswa.<br>2. Banyak siswa IPS = $\\frac{60^\\circ}{360^\\circ} \\times 120 = 20$ siswa.<br>3. $\\text{Mean} = \\frac{120}{4} = 30$ siswa."
+            },
+            {
+                id: 20,
+                category: "lingkaran",
+                title: "Soal 20: Konversi Sudut, Persentase, dan Jumlah Orang Tua",
+                description: "Diagram lingkaran pekerjaan orang tua dari 200 siswa:<br>• PNS = $90^\\circ$ ($25\\%$) &nbsp;|&nbsp; • Swasta = $144^\\circ$ ($40\\%$)<br>• Petani = $72^\\circ$ ($20\\%$) &nbsp;|&nbsp; • Buruh = <strong>?° (?%)</strong><br><div class='bg-slate-50 p-2 rounded-xl my-2 border flex justify-center'><div class='w-48 h-48'><canvas id='chartQ20'></canvas></div></div>",
+                chartType: "pie",
+                chartData: { labels: ["PNS (90°)", "Swasta (144°)", "Petani (72°)", "Buruh (?°)"], values: [90, 144, 72, 54] },
+                fields: [
+                    { id: "q20_sudut", label: "Besar Sudut Buruh (°)", key: "sudut", target: 54, hint: "360° - (90° + 144° + 72°)." },
+                    { id: "q20_buruh", label: "Banyak Orang Tua Buruh", key: "buruh", target: 30, hint: "(54° / 360°) * 200 orang." },
+                    { id: "q20_swasta", label: "Jumlah Modus (Swasta)", key: "swasta", target: 80, hint: "40% * 200 orang." }
+                ],
+                explanation: "<b>Pembahasan:</b><br>1. Sudut Buruh = $360^\\circ - 306^\\circ = 54^\\circ$.<br>2. Persentase Buruh = $\\frac{54}{360} \\times 100\\% = 15\\%$.<br>3. Banyak Buruh = $15\\% \\times 200 = 30$ orang.<br>4. Modus (Swasta $40\\%$) = $40\\% \\times 200 = 80$ orang."
+            }
+        ];
+
+        // Track scores per question (id -> points earned out of 5)
+        let questionScores = {};
+
+        // Render LaTeX formulas
+        function renderMath() {
+            if (typeof renderMathInElement === 'function') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        // Initialize App
+        document.addEventListener("DOMContentLoaded", () => {
+            renderNavigationGrid();
+            renderQuestions('all');
+            setTimeout(initCharts, 300);
+        });
+
+        // Render Nav Buttons (1-20)
+        function renderNavigationGrid() {
+            const grid = document.getElementById('navGrid');
+            grid.innerHTML = '';
+            for (let i = 1; i <= 20; i++) {
+                const btn = document.createElement('button');
+                btn.id = `navBtn_${i}`;
+                btn.className = `py-1.5 rounded-lg text-xs font-bold border transition bg-slate-100 text-slate-700 hover:bg-slate-200 border-slate-300`;
+                btn.innerText = i;
+                btn.onclick = () => {
+                    const el = document.getElementById(`qCard_${i}`);
+                    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                };
+                grid.appendChild(btn);
+            }
+        }
+
+        // Filter Questions
+        function filterQuestions(category) {
+            document.querySelectorAll('.q-filter-btn').forEach(btn => {
+                btn.classList.remove('bg-white', 'text-indigo-900', 'font-bold');
+                btn.classList.add('bg-white/20', 'text-white');
+            });
+            event.target.classList.add('bg-white', 'text-indigo-900', 'font-bold');
+
+            renderQuestions(category);
+            setTimeout(initCharts, 200);
+        }
+
+        // Render Question Cards
+        function renderQuestions(categoryFilter) {
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            const filtered = categoryFilter === 'all' 
+                ? quizData 
+                : quizData.filter(q => q.category === categoryFilter);
+
+            filtered.forEach(q => {
+                const card = document.createElement('div');
+                card.id = `qCard_${q.id}`;
+                card.className = "bg-white rounded-2xl border border-slate-200 p-6 shadow-sm space-y-4 relative overflow-hidden transition hover:border-indigo-300";
+
+                let fieldsHTML = q.fields.map(f => `
+                    <div>
+                        <label class="block text-xs font-bold text-slate-700 mb-1">${f.label}:</label>
+                        <input type="number" step="any" id="${f.id}" placeholder="Jawaban" 
+                            class="w-full border border-slate-300 rounded-lg p-2 text-xs font-mono focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <div class="flex items-center space-x-2">
+                            <span class="bg-indigo-600 text-white font-extrabold text-xs px-2.5 py-1 rounded-lg">Soal ${q.id}</span>
+                            <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">${q.category.toUpperCase()}</span>
+                        </div>
+                        <span id="scoreBadge_${q.id}" class="text-xs font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-full">Bobot: 5 Poin</span>
+                    </div>
+
+                    <div class="text-xs sm:text-sm text-slate-800 leading-relaxed space-y-2">
+                        <h4 class="font-bold text-slate-900">${q.title}</h4>
+                        <div>${q.description}</div>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
+                        ${fieldsHTML}
+                    </div>
+
+                    <!-- Hint Box -->
+                    <div id="hint_${q.id}" class="hidden bg-amber-50 border border-amber-200 p-3 rounded-xl text-xs text-amber-800 space-y-1">
+                        <p class="font-bold"><i class="fa-solid fa-lightbulb text-amber-500 mr-1"></i> Petunjuk Soal ${q.id}:</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            ${q.fields.map(f => `<li><strong>${f.label}:</strong> ${f.hint}</li>`).join('')}
+                        </ul>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
+                        <button onclick="toggleHint('hint_${q.id}')" class="text-xs text-amber-600 hover:text-amber-700 font-bold flex items-center">
+                            <i class="fa-solid fa-circle-question mr-1"></i> Petunjuk
+                        </button>
+                        <button onclick="checkSingleQuestion(${q.id})" class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition shadow-sm">
+                            Cek Jawaban Soal ${q.id}
+                        </button>
+                    </div>
+
+                    <!-- Explanation Feedback Box -->
+                    <div id="feedback_${q.id}" class="hidden text-xs rounded-xl p-3.5 border leading-relaxed space-y-1"></div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            renderMath();
+        }
+
+        // Toggle Hint visibility
+        function toggleHint(id) {
+            const el = document.getElementById(id);
+            if (el) el.classList.toggle('hidden');
+        }
+
+        // Initialize Chart.js for canvas questions
+        function initCharts() {
+            quizData.forEach(q => {
+                if (q.chartType && q.chartData) {
+                    const canvas = document.getElementById(`chartQ${q.id}`);
+                    if (canvas && !canvas.getAttribute('data-chart-init')) {
+                        canvas.setAttribute('data-chart-init', 'true');
+                        const ctx = canvas.getContext('2d');
+
+                        if (q.chartType === 'bar') {
+                            new Chart(ctx, {
+                                type: 'bar',
+                                data: {
+                                    labels: q.chartData.labels,
+                                    datasets: [{
+                                        data: q.chartData.values,
+                                        backgroundColor: '#6366f1',
+                                        borderRadius: 6
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: { legend: { display: false } },
+                                    scales: { y: { beginAtZero: true } }
+                                }
+                            });
+                        } else if (q.chartType === 'line') {
+                            new Chart(ctx, {
+                                type: 'line',
+                                data: {
+                                    labels: q.chartData.labels,
+                                    datasets: [{
+                                        data: q.chartData.values,
+                                        borderColor: '#10b981',
+                                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                        fill: true,
+                                        tension: 0.3,
+                                        pointRadius: 4
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: { legend: { display: false } },
+                                    scales: { y: { beginAtZero: false } }
+                                }
+                            });
+                        } else if (q.chartType === 'pie') {
+                            new Chart(ctx, {
+                                type: 'pie',
+                                data: {
+                                    labels: q.chartData.labels,
+                                    datasets: [{
+                                        data: q.chartData.values,
+                                        backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#8b5cf6']
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } }
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+        }
+
+        // Check single question answer
+        function checkSingleQuestion(qId) {
+            const q = quizData.find(item => item.id === qId);
+            if (!q) return;
+
+            let correctCount = 0;
+            const totalFields = q.fields.length;
+
+            q.fields.forEach(f => {
+                const input = document.getElementById(f.id);
+                if (input) {
+                    const userVal = parseFloat(input.value);
+                    if (!isNaN(userVal) && Math.abs(userVal - f.target) < 0.1) {
+                        correctCount++;
+                        input.classList.remove('border-slate-300', 'border-rose-500');
+                        input.classList.add('border-emerald-500', 'bg-emerald-50');
+                    } else {
+                        input.classList.remove('border-slate-300', 'border-emerald-500');
+                        input.classList.add('border-rose-500', 'bg-rose-50');
+                    }
+                }
+            });
+
+            // Calculate score (5 points per question if all correct, proportional if partial)
+            const pointsEarned = Number(((correctCount / totalFields) * 5).toFixed(1));
+            questionScores[qId] = pointsEarned;
+
+            // Update question card badge & feedback
+            const badge = document.getElementById(`scoreBadge_${qId}`);
+            const fb = document.getElementById(`feedback_${qId}`);
+            const navBtn = document.getElementById(`navBtn_${qId}`);
+
+            fb.classList.remove('hidden', 'bg-emerald-50', 'border-emerald-200', 'text-emerald-900', 'bg-rose-50', 'border-rose-200', 'text-rose-900');
+
+            if (correctCount === totalFields) {
+                badge.innerText = `Skor: 5 / 5 Poin`;
+                badge.className = "text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full";
+                fb.classList.add('bg-emerald-50', 'border-emerald-200', 'text-emerald-900');
+                fb.innerHTML = `<p class="font-bold"><i class="fa-solid fa-circle-check text-emerald-600 mr-1"></i> Tepat Sekali! (5/5 Poin)</p>${q.explanation}`;
+                if (navBtn) navBtn.className = "py-1.5 rounded-lg text-xs font-bold border transition bg-emerald-500 text-white border-emerald-600";
+            } else if (correctCount > 0) {
+                badge.innerText = `Skor: ${pointsEarned} / 5 Poin`;
+                badge.className = "text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full";
+                fb.classList.add('bg-amber-50', 'border-amber-200', 'text-amber-900');
+                fb.innerHTML = `<p class="font-bold"><i class="fa-solid fa-triangle-exclamation text-amber-600 mr-1"></i> Sebagian Benar (${pointsEarned}/5 Poin)</p>${q.explanation}`;
+                if (navBtn) navBtn.className = "py-1.5 rounded-lg text-xs font-bold border transition bg-amber-400 text-slate-900 border-amber-500";
+            } else {
+                badge.innerText = `Skor: 0 / 5 Poin`;
+                badge.className = "text-xs font-bold text-rose-700 bg-rose-100 px-2.5 py-1 rounded-full";
+                fb.classList.add('bg-rose-50', 'border-rose-200', 'text-rose-900');
+                fb.innerHTML = `<p class="font-bold"><i class="fa-solid fa-circle-xmark text-rose-600 mr-1"></i> Kurang Tepat (0/5 Poin)</p>${q.explanation}`;
+                if (navBtn) navBtn.className = "py-1.5 rounded-lg text-xs font-bold border transition bg-rose-500 text-white border-rose-600";
+            }
+
+            renderMath();
+            updateTotalScore();
+        }
+
+        // Check All Questions at once
+        function checkAllQuestions() {
+            quizData.forEach(q => checkSingleQuestion(q.id));
+            
+            const total = Object.values(questionScores).reduce((a, b) => a + b, 0);
+            if (total >= 80) {
+                confetti({
+                    particleCount: 100,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+            alert(`Pemeriksaan Selesai!\nSkor Akhir Kamu: ${total} / 100`);
+        }
+
+        // Update Header Score & Progress
+        function updateTotalScore() {
+            const sum = Object.values(questionScores).reduce((a, b) => a + b, 0);
+            const answeredCount = Object.keys(questionScores).length;
+
+            document.getElementById('totalScore').innerText = Math.round(sum);
+            document.getElementById('progressText').innerText = `${answeredCount} / 20 Soal`;
+        }
+    </script>
+</body>
+</html>
